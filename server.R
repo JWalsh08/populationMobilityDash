@@ -72,7 +72,7 @@ function(input, output, session) {
   })
   
   output$UI_table <- renderTable({
-    subset_trips_month()[,c("visitor_home_cbg", "num")]},
+    head(subset_trips_month()[,c("visitor_home_cbg", "num")], n = 25)},
     digits = 0,
     striped = TRUE,
     hover = TRUE,

@@ -17,46 +17,13 @@ sidebarLayout(
                 max = max(as.Date(overall_trips$month)),
                 value=as.Date("2019-12-01"),
                 timeFormat="%Y-%m"),
-    plotOutput("plot_months"),
+   
+    tableOutput("UI_table"),
   ),
 
   # Show Word Cloud
   mainPanel(
-    leafletOutput("outputmap",height = 1000)
-  )
-),
-#Data Explorer tab
-tabPanel("Data Explorer",
-  fluidRow(
-    column(3,
-      selectInput("data_naics", "Naics:",
-                  c("All Naics"="",uniqueNAICS),
-                  multiple=TRUE)
-    ),
-    column(3,
-      selectInput("data_cities", "City:",
-                  c("All cities"=""),
-                  multiple=TRUE)  
-    ),
-    column(3,
-      conditionalPanel("input.data_naics",
-        selectInput("data_POI", "Health POI:",
-                    c("All POIs"=""),
-                    multiple=TRUE))
-    ),
-    column(3,
-      sliderInput("data_month", "Months:",
-                  min = min(as.Date(overall_trips$month)),
-                  max = max(as.Date(overall_trips$month)),
-                  value = as.Date("2019-12-01"),
-                  timeFormat = "%Y-%m")
-    )
-  ),
-  fluidRow(
-    column(1,
-      
-    )
+    leafletOutput("outputmap",height = 1000), plotOutput("plot_months")
   )
 )
-
 )

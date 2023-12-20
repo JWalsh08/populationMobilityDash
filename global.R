@@ -17,14 +17,5 @@ overall_trips = merge(health_POIs,all_data, by.x="safegraph_place_id",by.y="safe
 uniqueLocations <- overall_trips %>% distinct(safegraph_place_id, .keep_all = TRUE)
 uniqueNAICS = unique(uniqueLocations$naics_code)
 maximum_value = max(aggregate(overall_trips[,c("num")],by = list(overall_trips$visitor_home_cbg, overall_trips$naics_code, overall_trips$month),FUN = sum)$x)
-#Converts overall_trips to organized datatable
-cleantable <- overall_trips %>%
-  select(
-    Naics = naics_code,
-    Business = location_name,
-    POI_Address = street_address,
-    Home_CBG = visitor_home_cbg,
-    Num_Vistors = num,
-    Month = month
-  )
 print("done prep")
+
