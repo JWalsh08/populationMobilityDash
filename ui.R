@@ -7,7 +7,7 @@ sidebarLayout(
   # Sidebar with a slider and selection inputs
   sidebarPanel(
     selectInput("NAICS_selection", "Choose NAICS code:",
-                choices = uniqueNAICS,
+                choices = NAICSTranslator$Name,
                 selected = 0),
     selectInput("POI_selection", "Select Individual POI: ",
                 choices = NULL),
@@ -17,13 +17,13 @@ sidebarLayout(
                 max = max(as.Date(overall_trips$month)),
                 value=as.Date("2019-12-01"),
                 timeFormat="%Y-%m"),
-   
-    tableOutput("UI_table"),
+    plotOutput("plot_months", inline = TRUE),
   ),
 
   # Show Word Cloud
   mainPanel(
-    leafletOutput("outputmap",height = 1000), plotOutput("plot_months")
+    leafletOutput("outputmap",height = 950)
   )
-)
+),
+
 )

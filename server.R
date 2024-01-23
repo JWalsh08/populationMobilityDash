@@ -4,9 +4,14 @@ function(input, output, session) {
   #subset_trips <- reactive({subset(overall_trips, naics_code == input$NAICS_selection)})#%>% distinct(location_name, .keep_all = TRUE)
   subset_trips <- reactive({
     if (input$POI_selection == "All POIs"){
-      subset(overall_trips, naics_code == input$NAICS_selection)
+      subset(overall_trips, naics_code == NAICSTranslator %>%
+                                          filter(Name == input$NAICS_selection) %>%
+                                          pull(Code))
     } else {
-      subset(overall_trips, naics_code == input$NAICS_selection & location_name == input$POI_selection)
+      subset(overall_trips, naics_code == NAICSTranslator %>%
+                                          filter(Name == input$NAICS_selection) %>% 
+                                          pull(Code) &
+                                          location_name == input$POI_selection)
     }
   })
   subset_trips_month <- reactive({
@@ -18,7 +23,6 @@ function(input, output, session) {
       subset(subset_trips(), month == month_select)
     }
   })
-  
   output$uniqueLocations <- renderDataTable({
     uniqueLocations <- aggregate(subset_trips_month()[,c("num")], by=list(subset_trips_month()$location_name), FUN=sum)
     names(uniqueLocations) = c("location_name","num_visitors")
@@ -43,7 +47,7 @@ function(input, output, session) {
     print(plot_dat())
     ggplot()+geom_line(data = plot_dat() , mapping = aes(x=month,y=num, group = 1)) + 
       ggtitle(paste0(input$NAICS_selection, ", ", input$POI_selection))+
-            theme_bw(base_size=20)+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))},height=500,width=800)
+            theme_bw(base_size=20)+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))},height=500,width=500)
 
   output$visitor_data <- renderDataTable({
     visitor_data = aggregate(subset_trips_month()[,c("num")],by = list(subset_trips_month()$visitor_home_cbg),FUN = sum)
@@ -60,7 +64,9 @@ function(input, output, session) {
   )
   #sets up Health POI selection box to react to NAICS choice
   observe({
-    x <- input$NAICS_selection
+    x <- NAICSTranslator %>%
+      filter(Name == input$NAICS_selection) %>% 
+      pull(Code)
     list <- subset(uniqueLocations, naics_code == x)
     list <- with(list, list[order(location_name),])
     list <- list$location_name
@@ -70,16 +76,6 @@ function(input, output, session) {
       selected = list[length(list)]
     )
   })
-  
-  output$UI_table <- renderTable({
-    head(subset_trips_month()[,c("visitor_home_cbg", "num")], n = 25)},
-    digits = 0,
-    striped = TRUE,
-    hover = TRUE,
-    bordered = TRUE,
-    width = '15cm',
-    align = 'l'
-  )
   
   output$outputmap <- renderLeaflet({
     
@@ -93,7 +89,7 @@ function(input, output, session) {
     names(uniqueLocations) = c("location_name","num_visitors")
     uniqueLocations = merge(x=uniqueLocations,y=unique(subset_trips_month()[,c("location_name","safegraph_place_id","latitude","longitude")]))
     
-    mypallet <- colorNumeric( palette="Spectral", domain=c(0,log10(maximum_value)),na.color='black')#shapefile_visited$num_visitors), na.color='black')
+    mypallet <- colorNumeric( palette="YlOrRd", domain=c(0,log10(maximum_value)),na.color='black')#shapefile_visited$num_visitors), na.color='black')
     leaflet(shapefile_visited) %>%
       addProviderTiles(providers$CartoDB.Positron) %>%
       addPolygons(
