@@ -4,11 +4,11 @@
 # Features:
   # NAICS Selection:
     Allows user to select business type from avaliable list to display all related points of intrest on the map
-  # Point of Interest:
+  # Point of Interest Selection:
     Allows user to select a given point of intrest for isolation on map
-  # Date selection:
+  # Date Selection:
     Allows user to isolate a given month of movement data to above selected points of interest
-  # 2-D timeplot:
+  # 2-D Timeplot:
     Displays timescale of selected points of intrest from 2019-2020
   # Chloropleth:
     Displays given point of interest selection as choropleth showing movement to points of intrest from highlighted census tracts
